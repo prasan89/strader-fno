@@ -1,0 +1,117 @@
+[
+  {
+    "symbol": "SBILIFE",
+    "session": "2026-11-12",
+    "plot_values": [
+      "1824.9",
+      "1723.3",
+      "1813.5",
+      "1734.7",
+      "1759.1",
+      "1789.1",
+      "1734.7"
+    ],
+    "previous_candle": {
+      "date": "2026-11-11",
+      "open": "1790.00",
+      "high": "1800.00",
+      "low": "1748.20",
+      "close": "1767.00"
+    },
+    "screenshot": "Screenshot 2026-11-12 at 1.40.38 PM.png",
+    "ohlc_source": "Yahoo Finance daily chart API",
+    "ohlc_source_url": "https://query1.finance.yahoo.com/v8/finance/chart/SBILIFE.NS?range=1mo&interval=1d"
+  },
+  {
+    "symbol": "UPL",
+    "session": "2026-11-12",
+    "plot_values": [
+      "570.73",
+      "533.62",
+      "566.75",
+      "537.60",
+      "546.62",
+      "557.73",
+      "537.60"
+    ],
+    "previous_candle": {
+      "date": "2026-11-11",
+      "open": "552.95",
+      "high": "561.75",
+      "low": "542.60",
+      "close": "554.70"
+    },
+    "screenshot": "Screenshot 2026-11-12 at 2.00.13 PM.png",
+    "ohlc_source": "Yahoo Finance daily chart API",
+    "ohlc_source_url": "https://query1.finance.yahoo.com/v8/finance/chart/UPL.NS?range=1mo&interval=1d"
+  },
+  {
+    "symbol": "GODREJIND",
+    "session": "2026-11-12",
+    "plot_values": [
+      "1029.5",
+      "927.43",
+      "1018.5",
+      "938.40",
+      "963.14",
+      "993.76",
+      "938.40"
+    ],
+    "previous_candle": {
+      "date": "2026-11-11",
+      "open": "972.30",
+      "high": "1004.90",
+      "low": "952.00",
+      "close": "968.95"
+    },
+    "screenshot": "Screenshot 2026-11-12 at 2.00.20 PM.png",
+    "ohlc_source": "Yahoo Finance daily chart API",
+    "ohlc_source_url": "https://query1.finance.yahoo.com/v8/finance/chart/GODREJIND.NS?range=1mo&interval=1d"
+  },
+  {
+    "symbol": "DLF",
+    "session": "2026-11-12",
+    "plot_values": [
+      "771.61",
+      "721.94",
+      "766.08",
+      "727.47",
+      "739.45",
+      "754.10",
+      "727.47"
+    ],
+    "previous_candle": {
+      "date": "2026-11-11",
+      "open": "750.25",
+      "high": "759.40",
+      "low": "734.15",
+      "close": "742.65"
+    },
+    "screenshot": "Screenshot 2026-11-12 at 2.00.41 PM.png",
+    "ohlc_source": "Yahoo Finance daily chart API",
+    "ohlc_source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DLF.NS?range=1mo&interval=1d"
+  },
+  {
+    "symbol": "NHPC",
+    "session": "2026-11-12",
+    "plot_values": [
+      "81.59",
+      "76.62",
+      "81.07",
+      "77.14",
+      "78.35",
+      "79.86",
+      "77.14"
+    ],
+    "previous_candle": {
+      "date": "2026-11-11",
+      "open": "79.98",
+      "high": "80.40",
+      "low": "77.81",
+      "close": "77.90"
+    },
+    "screenshot": "Screenshot 2026-11-12 at 2.00.46 PM.png",
+    "ohlc_source": "Yahoo Finance daily chart API",
+    "ohlc_source_url": "https://query1.finance.yahoo.com/v8/finance/chart/NHPC.NS?range=1mo&interval=1d"
+  }
+]

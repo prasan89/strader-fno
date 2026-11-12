@@ -1,0 +1,421 @@
+{
+  "formula_status": "unconfirmed",
+  "reference_count": 5,
+  "summary": {
+    "sbi_range_hypothesis": {
+      "matching_cases": 1,
+      "total_absolute_error": "3.29"
+    },
+    "fibonacci_midpoint": {
+      "matching_cases": 0,
+      "total_absolute_error": "138.10"
+    },
+    "gann_square_root": {
+      "matching_cases": 0,
+      "total_absolute_error": "263.36"
+    }
+  },
+  "cases": [
+    {
+      "symbol": "SBILIFE",
+      "session": "2026-11-12",
+      "previous_hl_midpoint": "1774.10",
+      "observed_midpoints": [
+        "1774.1",
+        "1774.1",
+        "1774.1"
+      ],
+      "observed_half_widths": [
+        "50.8",
+        "39.4",
+        "15.0"
+      ],
+      "candidate_results": {
+        "sbi_range_hypothesis": {
+          "predicted": [
+            "1824.9",
+            "1723.3",
+            "1813.5",
+            "1734.7",
+            "1759.1",
+            "1789.1",
+            "1734.7"
+          ],
+          "absolute_errors": [
+            "0.0",
+            "0.0",
+            "0.0",
+            "0.0",
+            "0.0",
+            "0.0",
+            "0.0"
+          ],
+          "all_seven_match": true
+        },
+        "fibonacci_midpoint": {
+          "predicted": [
+            "1814.8",
+            "1733.4",
+            "1806.1",
+            "1742.1",
+            "1761.9",
+            "1786.3",
+            "1742.1"
+          ],
+          "absolute_errors": [
+            "10.1",
+            "10.1",
+            "7.4",
+            "7.4",
+            "2.8",
+            "2.8",
+            "7.4"
+          ],
+          "all_seven_match": false
+        },
+        "gann_square_root": {
+          "predicted": [
+            "1819.9",
+            "1714.8",
+            "1809.3",
+            "1725.2",
+            "1751.3",
+            "1782.8",
+            "1725.2"
+          ],
+          "absolute_errors": [
+            "5.0",
+            "8.5",
+            "4.2",
+            "9.5",
+            "7.8",
+            "6.3",
+            "9.5"
+          ],
+          "all_seven_match": false
+        }
+      }
+    },
+    {
+      "symbol": "UPL",
+      "session": "2026-11-12",
+      "previous_hl_midpoint": "552.175",
+      "observed_midpoints": [
+        "552.175",
+        "552.175",
+        "552.175"
+      ],
+      "observed_half_widths": [
+        "18.555",
+        "14.575",
+        "5.555"
+      ],
+      "candidate_results": {
+        "sbi_range_hypothesis": {
+          "predicted": [
+            "570.94",
+            "533.41",
+            "566.73",
+            "537.62",
+            "546.62",
+            "557.73",
+            "537.62"
+          ],
+          "absolute_errors": [
+            "0.21",
+            "0.21",
+            "0.02",
+            "0.02",
+            "0.00",
+            "0.00",
+            "0.02"
+          ],
+          "all_seven_match": false
+        },
+        "fibonacci_midpoint": {
+          "predicted": [
+            "567.23",
+            "537.12",
+            "564.01",
+            "540.34",
+            "547.66",
+            "556.69",
+            "540.34"
+          ],
+          "absolute_errors": [
+            "3.50",
+            "3.50",
+            "2.74",
+            "2.74",
+            "1.04",
+            "1.04",
+            "2.74"
+          ],
+          "all_seven_match": false
+        },
+        "gann_square_root": {
+          "predicted": [
+            "584.53",
+            "525.65",
+            "578.50",
+            "531.40",
+            "545.90",
+            "563.57",
+            "531.40"
+          ],
+          "absolute_errors": [
+            "13.80",
+            "7.97",
+            "11.75",
+            "6.20",
+            "0.72",
+            "5.84",
+            "6.20"
+          ],
+          "all_seven_match": false
+        }
+      }
+    },
+    {
+      "symbol": "GODREJIND",
+      "session": "2026-11-12",
+      "previous_hl_midpoint": "978.45",
+      "observed_midpoints": [
+        "978.465",
+        "978.45",
+        "978.45"
+      ],
+      "observed_half_widths": [
+        "51.035",
+        "40.05",
+        "15.31"
+      ],
+      "candidate_results": {
+        "sbi_range_hypothesis": {
+          "predicted": [
+            "1030.3",
+            "926.61",
+            "1018.7",
+            "938.25",
+            "963.11",
+            "993.79",
+            "938.25"
+          ],
+          "absolute_errors": [
+            "0.8",
+            "0.82",
+            "0.2",
+            "0.15",
+            "0.03",
+            "0.03",
+            "0.15"
+          ],
+          "all_seven_match": false
+        },
+        "fibonacci_midpoint": {
+          "predicted": [
+            "1020.0",
+            "936.87",
+            "1011.1",
+            "945.76",
+            "965.97",
+            "990.93",
+            "945.76"
+          ],
+          "absolute_errors": [
+            "9.5",
+            "9.44",
+            "7.4",
+            "7.36",
+            "2.83",
+            "2.83",
+            "7.36"
+          ],
+          "all_seven_match": false
+        },
+        "gann_square_root": {
+          "predicted": [
+            "1008.3",
+            "930.43",
+            "1000.3",
+            "938.07",
+            "957.31",
+            "980.66",
+            "938.07"
+          ],
+          "absolute_errors": [
+            "21.2",
+            "3.00",
+            "18.2",
+            "0.33",
+            "5.83",
+            "13.10",
+            "0.33"
+          ],
+          "all_seven_match": false
+        }
+      }
+    },
+    {
+      "symbol": "DLF",
+      "session": "2026-11-12",
+      "previous_hl_midpoint": "746.775",
+      "observed_midpoints": [
+        "746.775",
+        "746.775",
+        "746.775"
+      ],
+      "observed_half_widths": [
+        "24.835",
+        "19.305",
+        "7.325"
+      ],
+      "candidate_results": {
+        "sbi_range_hypothesis": {
+          "predicted": [
+            "771.52",
+            "722.03",
+            "765.97",
+            "727.59",
+            "739.45",
+            "754.10",
+            "727.59"
+          ],
+          "absolute_errors": [
+            "0.09",
+            "0.09",
+            "0.11",
+            "0.12",
+            "0.00",
+            "0.00",
+            "0.12"
+          ],
+          "all_seven_match": false
+        },
+        "fibonacci_midpoint": {
+          "predicted": [
+            "766.62",
+            "726.93",
+            "762.38",
+            "731.17",
+            "740.82",
+            "752.73",
+            "731.17"
+          ],
+          "absolute_errors": [
+            "4.99",
+            "4.99",
+            "3.70",
+            "3.70",
+            "1.37",
+            "1.37",
+            "3.70"
+          ],
+          "all_seven_match": false
+        },
+        "gann_square_root": {
+          "predicted": [
+            "777.11",
+            "708.98",
+            "770.15",
+            "715.65",
+            "732.47",
+            "752.90",
+            "715.65"
+          ],
+          "absolute_errors": [
+            "5.50",
+            "12.96",
+            "4.07",
+            "11.82",
+            "6.98",
+            "1.20",
+            "11.82"
+          ],
+          "all_seven_match": false
+        }
+      }
+    },
+    {
+      "symbol": "NHPC",
+      "session": "2026-11-12",
+      "previous_hl_midpoint": "79.105",
+      "observed_midpoints": [
+        "79.105",
+        "79.105",
+        "79.105"
+      ],
+      "observed_half_widths": [
+        "2.485",
+        "1.965",
+        "0.755"
+      ],
+      "candidate_results": {
+        "sbi_range_hypothesis": {
+          "predicted": [
+            "81.64",
+            "76.57",
+            "81.07",
+            "77.14",
+            "78.35",
+            "79.86",
+            "77.14"
+          ],
+          "absolute_errors": [
+            "0.05",
+            "0.05",
+            "0.00",
+            "0.00",
+            "0.00",
+            "0.00",
+            "0.00"
+          ],
+          "all_seven_match": false
+        },
+        "fibonacci_midpoint": {
+          "predicted": [
+            "81.14",
+            "77.07",
+            "80.71",
+            "77.50",
+            "78.49",
+            "79.72",
+            "77.50"
+          ],
+          "absolute_errors": [
+            "0.45",
+            "0.45",
+            "0.36",
+            "0.36",
+            "0.14",
+            "0.14",
+            "0.36"
+          ],
+          "all_seven_match": false
+        },
+        "gann_square_root": {
+          "predicted": [
+            "89.32",
+            "67.26",
+            "86.98",
+            "69.32",
+            "74.63",
+            "81.24",
+            "69.32"
+          ],
+          "absolute_errors": [
+            "7.73",
+            "9.36",
+            "5.91",
+            "7.82",
+            "3.72",
+            "1.38",
+            "7.82"
+          ],
+          "all_seven_match": false
+        }
+      }
+    }
+  ],
+  "note": "Matching examples supports a candidate; it does not uniquely identify the original formula."
+}

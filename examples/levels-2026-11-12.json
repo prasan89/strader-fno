@@ -1,0 +1,35 @@
+{
+  "session": "2026-11-12",
+  "instruments": [
+    {
+      "symbol": "SBILIFE",
+      "instrument_key": "NSE_EQ|INE123W01016",
+      "upper_outer": "1824.9",
+      "source": "User-supplied TradingView JFT screenshot; formula unconfirmed"
+    },
+    {
+      "symbol": "UPL",
+      "instrument_key": "NSE_EQ|INE628A01036",
+      "upper_outer": "570.73",
+      "source": "User-supplied TradingView JFT screenshot; formula unconfirmed"
+    },
+    {
+      "symbol": "GODREJIND",
+      "instrument_key": "NSE_EQ|INE233A01035",
+      "upper_outer": "1029.5",
+      "source": "User-supplied TradingView JFT screenshot; formula unconfirmed"
+    },
+    {
+      "symbol": "DLF",
+      "instrument_key": "NSE_EQ|INE271C01023",
+      "upper_outer": "771.61",
+      "source": "User-supplied TradingView JFT screenshot; formula unconfirmed"
+    },
+    {
+      "symbol": "NHPC",
+      "instrument_key": "NSE_EQ|INE848E01016",
+      "upper_outer": "81.59",
+      "source": "User-supplied TradingView JFT screenshot; formula unconfirmed"
+    }
+  ]
+}
