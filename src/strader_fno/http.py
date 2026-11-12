@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
+from urllib.parse import urlencode
 
 
 class ApiError(RuntimeError):
@@ -15,13 +16,18 @@ class ApiError(RuntimeError):
 
 
 def request_json(url: str, *, service: str, headers: dict | None = None,
-                 payload: dict | None = None, timeout: float = 15) -> dict:
+                 payload: dict | None = None, timeout: float = 15, form: dict | None = None) -> dict:
     request_headers = {"Accept": "application/json", "User-Agent": "strader-fno/0.1"}
     request_headers.update(headers or {})
     body = None
     if payload is not None:
         body = json.dumps(payload).encode()
         request_headers["Content-Type"] = "application/json"
+    if form is not None:
+        if payload is not None:
+            raise ValueError("Provide form or JSON, not both")
+        body = urlencode(form).encode()
+        request_headers["Content-Type"] = "application/x-www-form-urlencoded"
     request = Request(url, data=body, headers=request_headers)
     try:
         with urlopen(request, timeout=timeout) as response:

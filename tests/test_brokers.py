@@ -51,6 +51,17 @@ class BrokerTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             parse_timestamp("2026-11-12T10:00:00")
 
+    def test_candle_mode_ignores_unfinished_five_minute_bar(self):
+        def transport(url, **kwargs):
+            return {"status": "success", "data": {"candles": [
+                ["2026-11-12T10:00:00+05:30", 100, 110, 99, 109],
+                ["2026-11-12T09:55:00+05:30", 100, 103, 99, 102],
+            ]}}
+        now = datetime(2026, 11, 12, 10, 0, 5, tzinfo=IST)
+        result = Upstox("test", transport).completed_five_minute_close("NSE_EQ|TEST", now)
+        self.assertEqual(Decimal(102), result.last_price)
+        self.assertEqual(now.replace(second=0), result.timestamp)
+
     def test_nonfinite_prices_are_rejected(self):
         for value in ("NaN", "Infinity", "-Infinity", "0", "-1"):
             with self.subTest(value=value), self.assertRaises(ValueError):

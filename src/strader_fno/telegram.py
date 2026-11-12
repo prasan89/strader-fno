@@ -21,3 +21,9 @@ class Telegram:
         if response.get("ok") is not True:
             parameters = response.get("parameters") or {}
             raise ApiError("Telegram", response.get("error_code"), parameters.get("retry_after"))
+
+    def verify(self) -> None:
+        response = self._transport(f"https://api.telegram.org/bot{self._token}/getChat", service="Telegram",
+                                   payload={"chat_id": self._chat_id})
+        if response.get("ok") is not True:
+            raise ApiError("Telegram", response.get("error_code"))

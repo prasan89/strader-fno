@@ -1,85 +1,119 @@
 # strader-fno
 
-JFT reference validation and Upstox-to-Telegram breakout notifications.
+Scan the 200 most liquid NSE cash stocks with active equity futures every five
+minutes and send Telegram alerts above the upper outer level or below the lower
+outer level. Upstox supplies instruments, daily candles and quotes.
 
-The complete JFT formula is still unconfirmed. Five user-supplied screenshots
-match the previous session's high/low midpoint. A simple range formula matches
-all seven SBI Life plot values, but fails the four other stocks. The live watcher
-therefore uses supplied, session-dated chart levels, not experimental formulas.
+## Strategy and selection
 
-## Cross-check the reference screenshots
+The user adopted Midpoint Range after reviewing reference levels. The exact
+proprietary JFT formula remains unconfirmed; see docs/formula-investigation.md.
 
-Requires Python 3.11 or newer. The project uses the Python standard library.
+For the previous completed NSE session's high H and low L, let P = (H + L) / 2
+and R = H - L:
 
-    PYTHONPATH=src python3 -m strader_fno research
+| Zone | Upper | Lower |
+| --- | --- | --- |
+| Outer, triggers alerts | P + 0.98R | P - 0.98R |
+| Inner | P + 0.76R | P - 0.76R |
+| Reference | P + 0.29R | P - 0.29R |
 
-The five fixtures preserve the seven plotted values and the preceding daily
-candles, with source URLs. The saved report is in
-docs/cross-check-2026-11-12.json. See docs/formula-investigation.md for the findings
-and remaining validation work. Decimal arithmetic and each value's displayed
-precision are used when comparing predictions.
+Levels use Decimal arithmetic, are rounded to two decimals and frozen for the
+trading day. Today's unfinished daily candle is never an input. Published NSE
+holidays and special sessions, including weekend trading, come from Upstox's
+calendar. History must include the actual previous trading session.
 
-## Configure live alerts
+Select NSE cash EQ underlyings with unexpired equity futures, excluding indices
+and duplicate expiries. Rank by mean(closing price * volume) across the last 20
+traded sessions and select 200. This is a liquidity proxy, not exact turnover or
+market-cap ranking. Stocks with inadequate or stale history are excluded and
+any selection shortfall is reported. History, catalogue and levels cache daily.
 
-    cp .env.example .env
+## Setup
 
-Set UPSTOX_ACCESS_TOKEN, TELEGRAM_BOT_TOKEN, and TELEGRAM_CHAT_ID in this file.
-Create a Telegram bot with BotFather and use a chat that has started the bot.
-Credentials, local state, and environment files are ignored by Git.
+Requires Python 3.11+ with no third-party runtime dependencies. From the repo:
 
-Upstox requires a valid API access token; being signed in to its website does
-not supply that token to this application. Renew the token when it expires.
+    PYTHONPATH=src python3 -B -m strader_fno setup
 
-The example levels file contains the five screenshots' uppermost red boundaries:
+Open http://127.0.0.1:8765. Enter an Upstox access token or the API key and secret
+of an app with the exact registered redirect http://127.0.0.1:8765/callback.
+Enter the Telegram bot token and chat ID; start the bot in Telegram first.
+The save button verifies Upstox and sends a labelled Telegram setup test before
+.env is saved with permissions
+600. Credentials and state are ignored by Git. Setup binds only to localhost
+and closes after successful saving. Renew the Upstox token here when it expires.
 
-| Symbol | Uppermost level, INR |
-| --- | ---: |
-| SBILIFE | 1824.9 |
-| UPL | 570.73 |
-| GODREJIND | 1029.5 |
-| DLF | 771.61 |
-| NHPC | 81.59 |
+## Prepare and scan
 
-Verify the instrument keys against the broker's instrument catalogue. Update
-the session date and chart levels every trading day; an old levels file is
-rejected. These fixtures are snapshots, not daily automatic calculations.
+    PYTHONPATH=src python3 -B -m strader_fno prepare
+    PYTHONPATH=src python3 -B -m strader_fno scan
 
-    PYTHONPATH=src python3 -m strader_fno telegram-test
-    PYTHONPATH=src python3 -m strader_fno watch --levels examples/levels-2026-11-12.json
+Default mode observes latest traded prices at 09:15:05, 09:20:05, etc. IST, in
+batches of 100. BREAKOUT means previous observed price <= upper outer and new
+price > upper outer. BREAKDOWN means previous observed price >= lower outer
+and new price < lower outer. Equality alone is not a signal. Previous close
+seeds each new session, capturing opening gaps and first observed crossings.
+Brief moves between observations may be missed.
 
-The explicit telegram-test command sends one setup message. The watcher polls
-Upstox full quotes every five seconds and checks the broker's last-trade time.
-It operates during NSE's regular weekday session, 09:15–15:30 IST. Previous-day
-quotes returned on a market holiday are rejected by their timestamps.
+Optional completed five-minute candle-close mode:
 
-A crossing means previous observed price <= level and new price > level.
-An initial quote already above the level establishes a baseline. To notify on
-that initial condition as well, pass --alert-if-already-above. These are live
-quote observations, not five-minute candle-close signals, and polling can miss
-a brief crossing between observations.
+    PYTHONPATH=src python3 -B -m strader_fno scan --mode candle_close
 
-Alerts are queued durably in SQLite and sent once per instrument/level/session.
-Failed deliveries remain pending across restarts. Delivery is at-least-once:
-a network timeout after Telegram accepts a message can cause a retry duplicate.
-Run one watcher per state file. Pending alerts from an earlier date are not
-sent the next day. Authentication failures stop the watcher with a nonzero exit;
-transient failures retry, including Telegram rate-limit delays.
+This mode fetches each instrument's intraday bars, rejects unfinished bars,
+and includes the final 15:30 close with a one-minute grace period. Latest-price
+quotes older than 60 seconds and candle closes older than 120 seconds are
+rejected. Status reports fresh quotes, missing instruments and request failures.
 
-## Fetch broker candles for further formula validation
+Send once per direction per stock per session. SQLite persists observations
+and pending delivery across restarts. Scanner events expire after ten minutes;
+old-session events are never sent the next day. Telegram delivery is at-least-once:
+an ambiguous timeout can cause a retry duplicate. Auth failures stop scanning;
+transient failures retry. A state directory permits only one active scanner.
 
-    PYTHONPATH=src python3 -m strader_fno history --instrument 'NSE_EQ|INE123W01016' --session 2026-11-12
+## Today's historical analysis
 
-The history command fetches closed daily candles before the requested session,
-including the preceding trading day across holidays. It does not use the current
-unfinished daily candle. Compare these broker prices with the daily inputs of
-the TradingView chart before promoting a candidate formula.
+    PYTHONPATH=src python3 -B -m strader_fno replay-today
+    PYTHONPATH=src python3 -B -m strader_fno replay-today --send
+
+Analyse today's completed five-minute candle closes and report the first
+crossing of each outer boundary per stock. --send delivers chronological pages
+to Telegram labelled HISTORICAL CHECK. These results cannot reconstruct every
+latest-price observation or intrabar crossing. Replay does not change live
+alert state. Reports record coverage, API failures and sent page counts in
+state/replay-YYYY-MM-DD.json. Repeating --send sends the report again. The
+intraday replay endpoint supplies the current day's data only.
+
+## Automatic operation on this Mac
+
+    PYTHONPATH=src python3 -B -m strader_fno install-service
+    PYTHONPATH=src python3 -B -m strader_fno status
+    PYTHONPATH=src python3 -B -m strader_fno stop-service
+
+Installation verifies both connections, then starts the macOS LaunchAgent at
+~/Library/LaunchAgents/com.strader-fno.scanner.plist. It starts on login, waits
+outside trading hours and prepares data 25 minutes before opening. The Mac must
+remain awake and online with a valid Upstox token. Authentication must be renewed
+locally when it expires. Credentials are not stored in the plist. Pass
+--mode candle_close to install the alternative observation mode.
+
+Logs: state/scanner.log and state/scanner-error.log. Status: state/status.json.
+Snapshots: state/levels-YYYY-MM-DD.json, including selected symbols, instrument
+keys, prior-session OHLC, liquidity scores and six levels.
+
+## Research and manual levels
+
+    PYTHONPATH=src python3 -B -m strader_fno research
+    PYTHONPATH=src python3 -B -m strader_fno history --instrument 'NSE_EQ|INE123W01016' --session 2026-11-12
+
+Saved reference comparisons: docs/cross-check-2026-11-12.json. Original watch
+command supports supplied, dated upper boundaries and polls every five seconds;
+it is separate from the automatic scan command.
 
 ## Tests
 
-    PYTHONPATH=src python3 -m unittest discover -s tests -v
+    PYTHONPATH=src python3 -B -m unittest discover -s tests -v
 
-Tests cover reference mismatches, timestamp freshness, strict crossings,
-duplicate suppression, restart recovery, failed Telegram delivery, stale levels,
-market-session boundaries, and broker response parsing. No broker credentials
-or external requests are used by tests. Live authenticated broker access and
-Telegram delivery need a separate setup check.
+Deterministic tests cover eligibility, ranking, cache recovery, holidays, special
+sessions, stale data, strict crossings, both directions, duplicates, expiry,
+replay, OAuth state, verified setup and private credential storage. Unit tests
+make no authenticated external calls.

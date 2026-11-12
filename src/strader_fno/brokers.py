@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from urllib.parse import quote, urlencode
 
 from .http import ApiError, request_json
@@ -59,5 +59,32 @@ class Upstox:
             if not isinstance(row, list) or len(row) < 5:
                 raise ApiError("Upstox")
             candles.append(Candle(parse_timestamp(row[0]).date(),
-                                  *(price(v) for v in row[1:5])))
+                                  *(price(v) for v in row[1:5]),
+                                  volume=int(row[5]) if len(row) > 5 else 0))
         return sorted(candles, key=lambda candle: candle.session)
+
+    def completed_five_minute_close(self, instrument: str, now: datetime) -> Quote | None:
+        quotes = self.intraday_five_minute_closes(instrument, now)
+        return quotes[-1] if quotes else None
+
+    def intraday_five_minute_closes(self, instrument: str, now: datetime) -> list[Quote]:
+        data = self._get(f"/v3/historical-candle/intraday/{quote(instrument, safe='')}/minutes/5")
+        quotes = []
+        for row in data.get("candles", []):
+            if not isinstance(row, list) or len(row) < 5:
+                raise ApiError("Upstox")
+            start = parse_timestamp(row[0])
+            end = start + timedelta(minutes=5)
+            if start.date() == now.astimezone(IST).date() and end <= now:
+                quotes.append(Quote(instrument, price(row[4]), end))
+        return sorted(quotes, key=lambda item: item.timestamp)
+
+    def verify(self) -> None:
+        self._get("/v2/user/profile")
+
+    def market_calendar(self, day: date | None = None) -> list[dict]:
+        path = "/v2/market/holidays" + ("/" + str(day) if day else "")
+        result = self._transport("https://api.upstox.com" + path, service="Upstox calendar", headers=self._headers)
+        if result.get("status") != "success" or not isinstance(result.get("data"), list):
+            raise ApiError("Upstox calendar")
+        return result["data"]

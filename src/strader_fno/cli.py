@@ -24,21 +24,9 @@ def load_env(path: Path = Path(".env")) -> None:
 
     No shell expansion, command substitution, or printing secret values.
     """
-    if not path.exists():
-        return
-    for line in path.read_text().splitlines():
-        line = line.strip()
-        if not line or line.startswith("#"):
-            continue
-        key, separator, value = line.partition("=")
-        if not separator or key.strip() not in {
-            "UPSTOX_ACCESS_TOKEN", "TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID"
-        }:
-            raise ValueError("Only broker/Telegram KEY=value settings are supported in .env")
-        value = value.strip()
-        if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
-            value = value[1:-1]
-        os.environ.setdefault(key.strip(), value)
+    from .settings import load_settings
+    for key, value in load_settings(path).items():
+        os.environ.setdefault(key, value)
 
 
 def watch(args) -> None:
@@ -118,10 +106,32 @@ def main(argv: list[str] | None = None) -> int:
     hist.add_argument("--instrument", required=True)
     hist.add_argument("--session", default=datetime.now(IST).date().isoformat())
     sub.add_parser("telegram-test", help="Explicitly send one setup-test notification to the configured chat")
+    setup = sub.add_parser("setup", help="Configure Upstox and Telegram in a private local browser form")
+    setup.add_argument("--port", type=int, default=8765)
+    for command in ("scan", "prepare"):
+        scan = sub.add_parser(command, help="Automatically select F&O stocks and generate daily levels")
+        scan.add_argument("--count", type=int, default=200)
+        scan.add_argument("--ranking-window", type=int, default=20)
+        scan.add_argument("--mode", choices=("ltp", "candle_close"), default="ltp")
+        scan.add_argument("--state-dir", default="state")
+        scan.add_argument("--dry-run", action="store_true")
+        scan.add_argument("--once", action="store_true")
+    install = sub.add_parser("install-service", help="Run the scanner automatically using a macOS launch agent")
+    install.add_argument("--count", type=int, default=200)
+    install.add_argument("--mode", choices=("ltp", "candle_close"), default="ltp")
+    sub.add_parser("stop-service", help="Stop the macOS scanner launch agent")
+    status = sub.add_parser("status", help="Show the latest scanner state without exposing credentials")
+    status.add_argument("--state-dir", default="state")
+    replay = sub.add_parser("replay-today", help="Analyse today's completed five-minute candles against daily outer levels")
+    replay.add_argument("--send", action="store_true", help="Send the historical analysis to the configured Telegram chat")
+    replay.add_argument("--count", type=int, default=200)
+    replay.add_argument("--ranking-window", type=int, default=20)
+    replay.add_argument("--state-dir", default="state")
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     try:
-        load_env()
+        if args.command in ("watch", "history", "telegram-test"):
+            load_env()
         if args.command == "research":
             references = json.loads(Path(args.references).read_text())
             print(json.dumps(compare_references(references), indent=2))
@@ -131,8 +141,26 @@ def main(argv: list[str] | None = None) -> int:
             history(args)
         elif args.command == "telegram-test":
             Telegram(os.environ.get("TELEGRAM_BOT_TOKEN", ""), os.environ.get("TELEGRAM_CHAT_ID", "")).send(
-                "strader-fno: Telegram setup test. Live alerts require current-session chart levels and an active watcher."
+                "strader-fno: Telegram setup test. The automatic scanner checks daily upper and lower outer levels every five minutes during NSE trading hours."
             )
+        elif args.command == "setup":
+            from .setup import run_setup
+            run_setup(port=args.port)
+        elif args.command in ("scan", "prepare"):
+            from .runner import run_scanner
+            run_scanner(args, prepare_only=args.command == "prepare")
+        elif args.command == "install-service":
+            from .service import install_service
+            print("Scanner launch agent installed:", install_service(Path.cwd(), count=args.count, mode=args.mode))
+        elif args.command == "stop-service":
+            from .service import stop_service
+            stop_service()
+        elif args.command == "replay-today":
+            from .replay import run_replay
+            run_replay(args)
+        elif args.command == "status":
+            path = Path(args.state_dir) / "status.json"
+            print(path.read_text() if path.exists() else '{"status":"not_started"}')
         return 0
     except KeyboardInterrupt:
         LOG.info("Watcher stopped")

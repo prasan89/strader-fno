@@ -12,10 +12,11 @@ def symmetric_zones(center: Decimal, outer: Decimal, inner: Decimal,
 
 
 def range_candidate(previous: Candle) -> Zones:
-    """Research hypothesis, NOT a confirmed reconstruction of JFT.
+    """User-adopted Midpoint Range strategy; JFT reconstruction is unconfirmed.
 
     Five screenshots establish the previous H/L midpoint. The offsets are
-    approximate and must not be used automatically as verified JFT levels.
+    approximate relative to the references. The scanner uses these fixed
+    coefficients as its own strategy, without labelling them verified JFT.
     """
     center = (previous.high + previous.low) / 2
     width = previous.high - previous.low

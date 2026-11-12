@@ -92,6 +92,25 @@ class AlertTests(unittest.TestCase):
         self.observe("1825", 1)
         self.assertEqual(0, self.store.deliver(Sender(), SESSION + timedelta(days=1)))
 
+    def test_expired_intraday_alert_is_not_delivered_after_outage(self):
+        self.observe("1820")
+        self.observe("1825", 1, delivery_ttl=600)
+        sender = Sender()
+        self.assertEqual(0, self.store.deliver(sender, SESSION, now=START + timedelta(minutes=11)))
+        self.assertEqual([], sender.messages)
+
+    def test_final_candle_close_and_weekend_special_session_can_alert(self):
+        close = START.replace(hour=15, minute=30)
+        self.store.seed("NSE_EQ|TEST", Decimal("1824.9"), SESSION, Decimal("1820"), START - timedelta(days=1))
+        quote = Quote("NSE_EQ|TEST", Decimal("1830"), close)
+        self.assertTrue(self.store.observe("TEST", quote, Decimal("1824.9"), SESSION,
+                                           now=close + timedelta(seconds=5), closing_bar=True))
+        opening = datetime(2026, 11, 8, 18, tzinfo=IST)
+        quote = Quote("NSE_EQ|SPECIAL", Decimal("1830"), opening)
+        self.assertTrue(self.store.observe("TEST", quote, Decimal("1824.9"), opening.date(),
+                                           now=opening, market_hours=(opening, opening + timedelta(hours=1)),
+                                           alert_if_already_above=True))
+
     def test_decimal_threshold_spellings_share_a_deduplication_key(self):
         self.observe("1820")
         self.observe("1825", 1)

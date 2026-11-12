@@ -5,7 +5,7 @@
 The full formula has not been recovered. The previous-session high/low midpoint
 is supported by all five reference stocks. A formula that matches one stock is
 insufficient: the offsets must match every independent level across symbols and
-additional trading days before automatic calculation can be enabled.
+additional trading days before claiming this is the recovered JFT formula.
 
 The seven plot values contain six distinct levels; the seventh repeats the
 fourth. The duplicated plot is checked for fidelity but is not independent
@@ -54,8 +54,9 @@ The same formula fails the remaining four stocks:
 | NHPC | 81.59 | 81.64 | +0.05 |
 
 The saved JSON report contains all predicted values and absolute errors, not
-only the upper outer boundary. The candidate is a research hypothesis and is
-not called by the live watcher.
+only the upper outer boundary. The candidate does not establish the exact JFT formula. The user subsequently
+adopted these coefficients as a separate Midpoint Range strategy for the
+automatic scanner. The original manual-level watcher still uses chart boundaries.
 
 ## Public source comparison
 
@@ -74,7 +75,6 @@ and high-range days of the same stock. Test rolling-range, volatility, and
 other offset rules against held-out cases; a per-symbol fitted coefficient
 that simply memorises these screenshots is not a recovered formula.
 
-Broker access and a Telegram delivery check remain unverified until the user
-configures the access token, bot token, and destination chat. Meanwhile, supplied
-daily chart levels can be monitored directly without implying the formula is
-known.
+Broker and Telegram credentials are configured locally through setup.
+Authenticated verification and historical replay are separate from proving the
+proprietary formula. Live alerts identify the strategy as Midpoint Range.

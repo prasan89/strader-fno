@@ -25,12 +25,15 @@ class Candle:
     high: Decimal
     low: Decimal
     close: Decimal
+    volume: int = 0
 
     def __post_init__(self) -> None:
         for value in (self.open, self.high, self.low, self.close):
             price(value)
         if not self.low <= min(self.open, self.close) <= max(self.open, self.close) <= self.high:
             raise ValueError("Inconsistent candle OHLC")
+        if not isinstance(self.volume, int) or self.volume < 0:
+            raise ValueError("Candle volume must be a nonnegative integer")
 
 
 @dataclass(frozen=True)
