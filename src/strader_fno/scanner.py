@@ -26,7 +26,7 @@ def market_window(now: datetime, calendar: TradingCalendar | None = None, *, clo
 
 def next_scan(now: datetime, interval: int = 300, lag: int = 5,
               calendar: TradingCalendar | None = None, *, closing_bar=False) -> datetime:
-    """Align to NSE open, allowing five seconds for a just-closed candle to arrive."""
+    """Start five minutes after NSE open, allowing five seconds for bar delivery."""
     if interval <= 0:
         raise ValueError("Scan interval must be positive")
     now = now.astimezone(IST)
@@ -36,8 +36,9 @@ def next_scan(now: datetime, interval: int = 300, lag: int = 5,
         window = calendar.window(day)
         if window:
             opening, closing = window
-            if now < opening + timedelta(seconds=lag):
-                return opening + timedelta(seconds=lag)
+            first = opening + timedelta(seconds=interval + lag)
+            if now < first:
+                return first
             elapsed = (now - opening).total_seconds() - lag
             slot = int(elapsed // interval) + 1
             target = opening + timedelta(seconds=slot * interval + lag)
@@ -231,6 +232,8 @@ class Scanner:
         closing_bar = self.mode == "candle_close"
         if not market_window(now, calendar, closing_bar=closing_bar):
             return {"status": "market_closed", "next_scan": next_scan(now, calendar=calendar, closing_bar=closing_bar).isoformat()}
+        if now < calendar.window(session)[0] + timedelta(minutes=5, seconds=5):
+            return {"status": "waiting_for_first_scan", "next_scan": next_scan(now, calendar=calendar, closing_bar=closing_bar).isoformat()}
         if not self.snapshot or self.snapshot["session"] != str(session):
             self.prepare(session)
         levels = {row["instrument_key"]: row for row in self.snapshot["instruments"]}

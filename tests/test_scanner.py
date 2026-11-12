@@ -106,6 +106,17 @@ class ScannerTests(unittest.TestCase):
         self.assertEqual([], self.broker.history_calls)
         self.assertEqual([], self.broker.quote_batches)
 
+    def test_no_quote_scan_before_0920_and_first_scan_runs_after_first_five_minutes(self):
+        before = NOW.replace(hour=9, minute=19, second=59)
+        result = self.scanner.scan_once(before)
+        self.assertEqual("waiting_for_first_scan", result["status"])
+        self.assertEqual("2026-11-12T09:20:05+05:30", result["next_scan"])
+        self.assertEqual([], self.broker.quote_batches)
+        first = before.replace(minute=20, second=5)
+        self.scanner.clock = lambda: first
+        self.broker.quotes = lambda keys: [Quote(key, Decimal(100), first) for key in keys]
+        self.assertEqual(200, self.scanner.scan_once(first)["fresh_quotes"])
+
     def test_previous_day_quotes_are_visible_as_stale_and_never_alert(self):
         self.broker.stale = True
         result = self.scanner.scan_once(NOW)
@@ -167,9 +178,9 @@ class ScheduleTests(unittest.TestCase):
     def test_five_minute_boundaries_and_friday_close(self):
         self.assertEqual(NOW.replace(minute=5), next_scan(NOW))
         before = NOW.replace(hour=9, minute=14, second=0)
-        self.assertEqual(before.replace(minute=15, second=5), next_scan(before))
+        self.assertEqual(before.replace(minute=20, second=5), next_scan(before))
         friday = datetime(2026, 11, 13, 15, 26, tzinfo=IST)
-        self.assertEqual(datetime(2026, 11, 16, 9, 15, 5, tzinfo=IST), next_scan(friday))
+        self.assertEqual(datetime(2026, 11, 16, 9, 20, 5, tzinfo=IST), next_scan(friday))
 
     def test_weekends_and_market_close_are_outside_the_window(self):
         self.assertFalse(market_window(NOW.replace(hour=15, minute=30)))

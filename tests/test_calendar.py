@@ -13,7 +13,7 @@ class CalendarTests(unittest.TestCase):
         self.assertIsNone(calendar.window(date(2026, 11, 10)))
         self.assertEqual(date(2026, 11, 9), calendar.previous_session(date(2026, 11, 11)))
         now = datetime(2026, 11, 9, 16, tzinfo=IST)
-        self.assertEqual(datetime(2026, 11, 11, 9, 15, 5, tzinfo=IST), next_scan(now, calendar=calendar))
+        self.assertEqual(datetime(2026, 11, 11, 9, 20, 5, tzinfo=IST), next_scan(now, calendar=calendar))
 
     def test_weekend_special_session_uses_published_hours(self):
         opening = datetime(2026, 11, 8, 18, tzinfo=IST)
@@ -24,7 +24,7 @@ class CalendarTests(unittest.TestCase):
         self.assertTrue(within_window(opening, calendar))
         self.assertFalse(within_window(closing, calendar))
         self.assertEqual(date(2026, 11, 8), calendar.previous_session(date(2026, 11, 9)))
-        self.assertEqual(opening + timedelta(seconds=5), next_scan(opening, calendar=calendar))
+        self.assertEqual(opening + timedelta(minutes=5, seconds=5), next_scan(opening, calendar=calendar))
 
     def test_last_completed_bar_has_one_minute_grace_and_scheduler_includes_it(self):
         calendar = TradingCalendar()

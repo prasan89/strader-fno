@@ -48,7 +48,7 @@ and closes after successful saving. Renew the Upstox token here when it expires.
     PYTHONPATH=src python3 -B -m strader_fno prepare
     PYTHONPATH=src python3 -B -m strader_fno scan
 
-Default mode observes latest traded prices at 09:15:05, 09:20:05, etc. IST, in
+Default mode observes latest traded prices at 09:20:05, 09:25:05, etc. IST, in
 batches of 100. BREAKOUT means previous observed price <= upper outer and new
 price > upper outer. BREAKDOWN means previous observed price >= lower outer
 and new price < lower outer. Equality alone is not a signal. Previous close
@@ -91,7 +91,8 @@ intraday replay endpoint supplies the current day's data only.
 
 Installation verifies both connections, then starts the macOS LaunchAgent at
 ~/Library/LaunchAgents/com.strader-fno.scanner.plist. It starts on login, waits
-outside trading hours and prepares data 25 minutes before opening. The Mac must
+outside trading hours and prepares data 25 minutes before opening. The first
+quote scan is five minutes after opening, plus five seconds for data delivery. The Mac must
 remain awake and online with a valid Upstox token. Authentication must be renewed
 locally when it expires. Credentials are not stored in the plist. Pass
 --mode candle_close to install the alternative observation mode.

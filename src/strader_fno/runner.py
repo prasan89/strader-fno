@@ -77,9 +77,10 @@ def _run_scanner(args, *, prepare_only=False):
                     calendar = scanner.calendar_for(now.date())
                     window = calendar.window(now.date())
                     closing_bar = args.mode == "candle_close"
-                    if market_window(now, calendar, closing_bar=closing_bar):
+                    first_scan = window[0] + timedelta(minutes=5, seconds=5) if window else None
+                    if first_scan and now >= first_scan and market_window(now, calendar, closing_bar=closing_bar):
                         scanner.scan_once(now)
-                    elif (window and window[0] - timedelta(minutes=25) <= now < window[0]
+                    elif (window and window[0] - timedelta(minutes=25) <= now < first_scan
                           and (not scanner.snapshot or scanner.snapshot["session"] != str(now.date()))):
                         scanner.prepare(now.date())
                 except ApiError as exc:
