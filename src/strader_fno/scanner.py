@@ -11,6 +11,7 @@ from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 
 from .alerts import AlertStore
+from .excel import export_levels
 from .calendar import TradingCalendar, within_window
 from .formulas import range_candidate
 from .http import ApiError
@@ -148,6 +149,7 @@ class Scanner:
                     and result.get("previous_session") == str(expected_session)
                     and result.get("requested_count") == self.count and result.get("ranking_window") == self.window):
                 self.snapshot = result
+                export_levels(result, self.directory / f"levels-{session}.xlsx")
                 return result
         catalog_path = self.directory / f"catalog-{session}.json"
         if catalog_path.exists():
@@ -220,6 +222,8 @@ class Scanner:
                   "exclusions": exclusions, "instruments": entries}
         write_json(snapshot_path, result)
         self.snapshot = result
+        excel_path = export_levels(result, self.directory / f"levels-{session}.xlsx")
+        LOG.info("Excel cross-check workbook ready: %s", excel_path)
         if len(entries) < self.count:
             LOG.warning("Selected %d/%d stocks; insufficient eligible fresh history", len(entries), self.count)
         LOG.info("Daily levels ready for %d stocks, based on session %s", len(entries), latest_session)

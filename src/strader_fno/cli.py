@@ -127,6 +127,11 @@ def main(argv: list[str] | None = None) -> int:
     replay.add_argument("--count", type=int, default=200)
     replay.add_argument("--ranking-window", type=int, default=20)
     replay.add_argument("--state-dir", default="state")
+    export = sub.add_parser("export-levels", help="Export cached daily stock levels to an Excel cross-check workbook")
+    export.add_argument("--session", default=datetime.now(IST).date().isoformat())
+    export.add_argument("--state-dir", default="state")
+    export.add_argument("--output")
+    export.add_argument("--overwrite", action="store_true", help="Replace an existing workbook, including any comparison edits")
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     try:
@@ -158,6 +163,15 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command == "replay-today":
             from .replay import run_replay
             run_replay(args)
+        elif args.command == "export-levels":
+            from .excel import export_levels
+            session = date.fromisoformat(args.session)
+            directory = Path(args.state_dir)
+            snapshot = json.loads((directory / f"levels-{session}.json").read_text())
+            if snapshot.get("session") != str(session):
+                raise ValueError("Cached levels do not match the requested trading session")
+            target = Path(args.output) if args.output else directory / f"levels-{session}.xlsx"
+            print("Excel cross-check workbook:", export_levels(snapshot, target, overwrite=args.overwrite))
         elif args.command == "status":
             path = Path(args.state_dir) / "status.json"
             print(path.read_text() if path.exists() else '{"status":"not_started"}')

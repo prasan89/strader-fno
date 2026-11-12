@@ -88,10 +88,14 @@ class ScannerTests(unittest.TestCase):
 
     def test_daily_snapshot_survives_restart_without_history_refetch(self):
         self.scanner.prepare(SESSION)
+        excel = Path(self.directory.name) / f"levels-{SESSION}.xlsx"
+        self.assertTrue(excel.exists())
+        excel.unlink()
         self.scanner.close()
         self.scanner = Scanner(self.broker, self.sender, Path(self.directory.name),
                                catalog_provider=lambda: self.fail("should reuse daily snapshot"), clock=lambda: NOW)
         self.assertEqual(200, self.scanner.prepare(SESSION)["selected_count"])
+        self.assertTrue(excel.exists())
         self.assertEqual(210, len(self.broker.history_calls))
 
     def test_new_session_fetches_and_rebuilds_daily_levels(self):

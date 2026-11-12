@@ -101,6 +101,23 @@ Logs: state/scanner.log and state/scanner-error.log. Status: state/status.json.
 Snapshots: state/levels-YYYY-MM-DD.json, including selected symbols, instrument
 keys, prior-session OHLC, liquidity scores and six levels.
 
+## Excel cross-check at 09:20
+
+Daily preparation automatically writes state/levels-YYYY-MM-DD.xlsx alongside
+the cache before the first scan. The workbook contains all selected stocks with
+exact cached levels, prior-session high/low/close, midpoint, range and ranking.
+The Compare JFT sheet has yellow cells for entering your chart's six actual JFT
+values, difference formulas and a MATCH/DIFF result. Formula and sources records
+the candidate coefficients and the unconfirmed proprietary JFT reconstruction.
+
+    PYTHONPATH=src python3 -B -m strader_fno export-levels --session 2026-11-12
+
+This command exports a saved cache without calling Upstox. Automatic exports
+preserve any existing dated workbook and comparison edits. Explicit --overwrite
+replaces an existing workbook. Excel recalculates comparison formulas on opening.
+The scheduled export still requires fresh daily data, a valid Upstox token and
+an awake, connected Mac.
+
 ## Research and manual levels
 
     PYTHONPATH=src python3 -B -m strader_fno research
