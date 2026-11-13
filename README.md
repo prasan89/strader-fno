@@ -43,6 +43,22 @@ The save button verifies Upstox and sends a labelled Telegram setup test before
 600. Credentials and state are ignored by Git. Setup binds only to localhost
 and closes after successful saving. Renew the Upstox token here when it expires.
 
+### Avoid daily token copying
+
+Upstox's [Analytics Token](https://upstox.com/developer/api-documentation/analytics-token/)
+is valid for one year and supports the scanner's market quotes, historical data
+and market information APIs from a laptop without a whitelisted static IP.
+Generate it in Upstox Developer Apps → Analytics → Generate Token and enter it
+as the access token in local setup. Connection verification uses a market
+information endpoint, which works with both standard and Analytics tokens.
+The scanner does not require a User API profile lookup.
+
+A saved client ID and client secret cannot silently renew a standard OAuth
+access token. Upstox's [Access Token Request](https://upstox.com/developer/api-documentation/access-token-request/)
+can initiate daily requests, but each request still needs the account holder's
+approval and a public notifier webhook. This app does not currently schedule
+that flow. The one-year Analytics token avoids that daily renewal requirement.
+
 ## Prepare and scan
 
     PYTHONPATH=src python3 -B -m strader_fno prepare

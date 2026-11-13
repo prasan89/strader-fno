@@ -9,6 +9,13 @@ from strader_fno.telegram import Telegram
 
 
 class BrokerTests(unittest.TestCase):
+    def test_token_verification_uses_market_api_supported_by_analytics_tokens_without_static_ip(self):
+        def transport(url, **kwargs):
+            self.assertEqual("https://api.upstox.com/v2/market/status/NSE", url)
+            self.assertEqual("Bearer analytics-test-token", kwargs["headers"]["Authorization"])
+            return {"status": "success", "data": {"exchange": "NSE", "status": "normal"}}
+        Upstox("analytics-test-token", transport).verify()
+
     def test_full_quote_uses_broker_trade_time_and_requested_instrument(self):
         def transport(url, **kwargs):
             self.assertIn("/v2/market-quote/quotes?", url)

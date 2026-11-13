@@ -84,7 +84,8 @@ form{background:white;padding:28px;border-radius:16px}input,select{display:block
 MESSAGE
 <form method="post" action="/configure"><input type="hidden" name="csrf" value="CSRF">
 <h2>Upstox</h2><label>Connection method</label><select name="auth_method"><option value="token">I have an API access token</option><option value="oauth">Sign in using my developer app</option></select>
-<label>Access token</label><input type="password" name="UPSTOX_ACCESS_TOKEN" autocomplete="off">
+<label>Access token — one-year Analytics token recommended</label><input type="password" name="UPSTOX_ACCESS_TOKEN" autocomplete="off">
+<p><small>To avoid daily token copying, generate a one-year token in Upstox Developer Apps → Analytics → Generate Token, then paste it above. Standard developer-app login still requires your approval when renewing.</small></p>
 <small>For developer-app login, enter the two fields below instead. Register this redirect URL in your Upstox app: ORIGIN/callback</small>
 <p><a href="https://account.upstox.com/developer/apps" target="_blank" rel="noopener noreferrer">Open Upstox developer apps</a></p>
 <label>Client ID / API key</label><input name="UPSTOX_CLIENT_ID" autocomplete="off">

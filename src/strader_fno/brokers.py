@@ -80,7 +80,9 @@ class Upstox:
         return sorted(quotes, key=lambda item: item.timestamp)
 
     def verify(self) -> None:
-        self._get("/v2/user/profile")
+        # Analytics tokens allow market information from a laptop, while User
+        # APIs require a whitelisted static IP. Verify the capability we use.
+        self._get("/v2/market/status/NSE")
 
     def market_calendar(self, day: date | None = None) -> list[dict]:
         path = "/v2/market/holidays" + ("/" + str(day) if day else "")

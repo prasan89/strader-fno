@@ -24,8 +24,8 @@ class SetupTests(unittest.TestCase):
         self.calls.append((url, kwargs))
         if url.endswith("/token"):
             return {"access_token": "new-private-token"}
-        if url.endswith("/profile"):
-            return {"status": "success", "data": {"user_id": "test"}}
+        if url.endswith("/market/status/NSE"):
+            return {"status": "success", "data": {"exchange": "NSE", "status": "normal"}}
         return {"ok": True, "result": {"id": 1}}
 
     def test_local_form_csrf_check_and_no_secret_echo(self):
